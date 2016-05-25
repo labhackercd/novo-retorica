@@ -142,21 +142,30 @@ def update_with(d1, d2):
 @click.option('-e', '--end', type=DateParamType())
 # TODO should be an argument!!!! maybe we should just point to the kingsnake
 # project and let people setup their connections there? that would be fking awesome!
+@click.option('-i', '--ignore', type=click.Choice([u'AB', u'HO', u'PE', u'BC', u'OD', u'CG']),
+              multiple=True, help=(u'Ignore speeches based on their session type (fase da sesão). '
+                                   u'You can ignore multiple types by repeating the flag. '
+                                   u'Eg.: -i AB -i OD.'))
 @click.option('-f', '--files', type=click.Path(exists=True, file_okay=False),
               required=True, help=u'Where the files are stored.')
 @click.argument('output', type=click.File(mode='w'))
-def import_corpus(host, port, database, start, end, files, output):
+def import_corpus(host, port, database, start, end, ignore, files, output):
     database = make_database_connection(host, port, database)
 
+    lk = []
     if start:
-        start = {u'horaInicioDiscurso': {u'$gt': start}}
+        lk.append({u'horaInicioDiscurso': {u'$gt': start}})
     if end:
-        end = {u'horaInicioDiscurso': {u'$lt': end}}
+        lk.append({u'horaInicioDiscurso': {u'$lt': end}})
+    if ignore:
+        lk.append({u'faseSessao': {u'$not': {u'$in': ignore}}})
 
-    if start and end:
-        lookup = {u'$and': [start, end]}
+    if len(lk) == 1:
+        lookup = lk[0]
+    elif len(lk) == 0:
+        lookup = {}
     else:
-        lookup = start or end or {}
+        lookup = {u'$and': lk}
 
     speeches = database.discursos.find(lookup)
 

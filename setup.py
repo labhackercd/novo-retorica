@@ -14,8 +14,8 @@ except IOError:
 setup(
     name='retorica',
     version=__version__,
-    packages=['retorica'],
-    install_requires=['click', 'rpy2', 'pymongo', 'arrow', 'pyth'],
+    package=['retorica'],
+    install_requires=['click', 'rpy2', 'pymongo', 'arrow', 'pyth', 'jinja2', 'numpy'],
     author='Dirley Rodrigues',
     author_email='dirleyrls@gmail.com',
     long_description=README,
