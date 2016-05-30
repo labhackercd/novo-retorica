@@ -62,19 +62,46 @@ processCorpus <- function(corpus, target, topics=70) {
     write.csv(x=exportResult(topics[[2]]), file=paste(target, ".csv", sep=""))
 }
 
+parseTagLine <- function(line) {
+    line <- gsub("#.*", "", line)
+    line <- gsub("^(\\s|\\t)+|(\\s|\\t)+$", "", line)
+    return(line)
+}
+
 tagResults <- function(corpus, topics, tags) {
     corpus <- fromJSON(corpus)
     topics <- readRDS(topics)
     tags <- readLines(tags)
 
+    # Strip noise from tags (comments, blank lines, etc)
+    tags <- lapply(tags, parseTagLine)
+
+    topics <- topics[[1]]
+
+    done <- FALSE
+    repeat {
+        for (i in 1:dim(topics)[1]) {
+            if (c(i) == ncol(topics)) {
+                done <- TRUE
+            }
+            if (tags[i] == "") {
+                topics <- topics[,-i]
+                break
+            }
+        }
+        if (done) {
+            break
+        }
+    }
+
     autorTopicOne <- NULL
-    for (i in 1:dim(topics[[1]])[1]) {
-        autorTopicOne[i] <- which.max(topics[[1]][i,])
+    for (i in 1:dim(topics)[1]) {
+        autorTopicOne[i] <- which.max(topics[i,])
     }
     autorTopicOne <- as.data.frame(autorTopicOne)
 
     # compute the proportion of documents from each author to each topic
-    autorTopicPerc <- prop.table(topics[[1]], 1)
+    autorTopicPerc <- prop.table(topics, 1)
 
     for (i in 1:nrow(autorTopicOne)) {
         autorTopicOne$tag[i] <- tags[ autorTopicOne$autorTopicOne[i] ]
