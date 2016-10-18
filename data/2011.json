@@ -2,7 +2,7 @@
     "_id": {
         "$oid": "5444f9394afcc817fe950eb1"
     },
-    "description": "De cerca de 21 mil discursos proferidos no ano de 2011, levantamos os %(topic_count)d principais temas e quais os deputados mais relacionados a cada um deles.",
+    "description": "O Retórica Parlamentar utiliza como fonte os discursos proferidos no Pequeno Expediente da Câmara dos Deputados. De cerca de 21 mil discursos proferidos no ano de 2011, levantamos os %(topic_count)d principais temas e quais os deputados mais relacionados a cada um deles.",
     "slug": "2011",
     "title": "2011",
     "topics": [{
