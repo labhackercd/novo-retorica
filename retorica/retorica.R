@@ -73,18 +73,21 @@ tagResults <- function(corpus, topics, tags) {
     topics <- readRDS(topics)
     tags <- readLines(tags)
 
+    # We only need this matrix
+    topics <- topics[[1]]
+
     # Strip noise from tags (comments, blank lines, etc)
     tags <- lapply(tags, parseTagLine)
 
-    topics <- topics[[1]]
-
+    # Remove empty tags and their corresponding columns from the topics matrix.
     done <- FALSE
     repeat {
-        for (i in 1:dim(topics)[1]) {
+        for (i in 1:ncol(topics)) {
             if (c(i) == ncol(topics)) {
                 done <- TRUE
             }
             if (tags[i] == "") {
+                tags[i] <- NULL
                 topics <- topics[,-i]
                 break
             }
